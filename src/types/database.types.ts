@@ -61,6 +61,27 @@ export type Database = {
         }
         Relationships: []
       }
+      trackers: {
+        Row: {
+          created_at: string
+          email: string
+          id: number
+          since: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: number
+          since: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: number
+          since?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

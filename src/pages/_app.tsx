@@ -2,6 +2,7 @@ import { AppProps } from "next/app";
 import { createPagesBrowserClient } from "@supabase/auth-helpers-nextjs";
 import { SessionContextProvider, Session } from "@supabase/auth-helpers-react";
 import { useState } from "react";
+import "@/styles/globals.css";
 
 function MyApp({
   Component,
