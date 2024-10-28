@@ -1,17 +1,16 @@
 import { CreateTracker } from "@/components/CreateTracker";
 import { SignIn } from "@/components/SignIn";
 import { SignOut } from "@/components/SignOut";
-import { Database } from "@/types/database.types";
+import { TrackerItem } from "@/components/TrackerItem";
+import { Tracker } from "@/types/tracker.types";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import Head from "next/head";
 import { useEffect, useState } from "react";
 
 export default function Home() {
   const user = useUser();
-  const supabase = useSupabaseClient<Database>();
-  const [trackers, setTrackers] = useState<
-    Database["public"]["Tables"]["trackers"]["Row"][]
-  >([]);
+  const supabase = useSupabaseClient();
+  const [trackers, setTrackers] = useState<Tracker[]>([]);
 
   const fetchTrackers = async () => {
     if (!user?.email) return;
@@ -38,7 +37,7 @@ export default function Home() {
         <SignOut />
         <h1>My trackers:</h1>
         {trackers.map((tracker) => (
-          <div key={tracker.id}>{tracker.since}</div>
+          <TrackerItem tracker={tracker} key={tracker.id} />
         ))}
       </div>
       <hr />
