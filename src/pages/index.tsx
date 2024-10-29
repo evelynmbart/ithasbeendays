@@ -1,6 +1,6 @@
-import { CreateTracker } from "@/components/CreateTracker";
-import { SignIn } from "@/components/SignIn";
+import { Landing } from "@/components/Landing";
 import { SignOut } from "@/components/SignOut";
+import { TrackerForm } from "@/components/TrackerForm";
 import { TrackerItem } from "@/components/TrackerItem";
 import { Tracker } from "@/types/tracker.types";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
@@ -25,7 +25,7 @@ export default function Home() {
     fetchTrackers();
   }, [user]);
 
-  if (!user) return <SignIn />;
+  if (!user) return <Landing />;
 
   return (
     <>
@@ -35,13 +35,25 @@ export default function Home() {
       <div>
         <p>Signed in as {user.email}</p>
         <SignOut />
-        <h1>My trackers:</h1>
-        {trackers.map((tracker) => (
-          <TrackerItem tracker={tracker} key={tracker.id} />
-        ))}
+        <h2>My trackers:</h2>
+        {trackers.length ? (
+          <>
+            <p>It has been X days since...</p>
+            {trackers.map((tracker) => (
+              <TrackerItem
+                tracker={tracker}
+                key={tracker.id}
+                refresh={fetchTrackers}
+              />
+            ))}
+          </>
+        ) : (
+          <p>You have no trackers yet. Create one below.</p>
+        )}
       </div>
       <hr />
-      <CreateTracker refresh={fetchTrackers} />
+      <h2>Create a new tracker</h2>
+      <TrackerForm onSubmit={fetchTrackers} />
     </>
   );
 }

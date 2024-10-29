@@ -1,13 +1,15 @@
+import { Tracker } from "@/types/tracker.types";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { FormEvent, useState } from "react";
 
 interface Props {
-  refresh: () => Promise<void>;
+  onSubmit: () => void;
+  editingTracker?: Tracker;
 }
 
-export function CreateTracker({ refresh }: Props) {
-  const [tracker, setTracker] = useState<string>("");
-  const [slug, setSlug] = useState<string>("");
+export function TrackerForm({ onSubmit, editingTracker }: Props) {
+  const [tracker, setTracker] = useState<string>(editingTracker?.since ?? "");
+  const [slug, setSlug] = useState<string>(editingTracker?.slug ?? "");
 
   const user = useUser();
   const supabase = useSupabaseClient();
@@ -16,16 +18,27 @@ export function CreateTracker({ refresh }: Props) {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const { error } = await supabase.from("trackers").insert({
-      email: user.email ?? "",
-      since: tracker,
-      slug
-    });
-    if (error) {
-      alert(error.message);
-      return;
+    if (editingTracker) {
+      const { error } = await supabase
+        .from("trackers")
+        .update({ since: tracker, slug })
+        .eq("id", editingTracker.id);
+      if (error) {
+        alert(error.message);
+        return;
+      }
+    } else {
+      const { error } = await supabase.from("trackers").insert({
+        email: user.email ?? "",
+        since: tracker,
+        slug
+      });
+      if (error) {
+        alert(error.message);
+        return;
+      }
     }
-    refresh();
+    onSubmit();
   };
 
   const handleSlugChange = (newSlug: string) => {
@@ -35,7 +48,6 @@ export function CreateTracker({ refresh }: Props) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <h1>Create tracker</h1>
       <p>
         It has been X days since:{" "}
         <input
