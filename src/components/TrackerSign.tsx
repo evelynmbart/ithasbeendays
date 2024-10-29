@@ -1,4 +1,3 @@
-import { Incident } from "@/types/incident.types";
 import { Tracker } from "@/types/tracker.types";
 import { daysSince } from "@/utils/timing";
 import { Display } from "react-7-segment-display";
